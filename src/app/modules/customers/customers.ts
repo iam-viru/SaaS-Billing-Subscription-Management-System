@@ -9,6 +9,9 @@ import { CustomerService } from '../../core/services/customer';
   styleUrl: './customers.css',
 })
 export class Customers implements OnInit {
+  // sorting
+  sortField: 'name' | 'email' | 'plan' | 'status' | 'mrr' | 'createdAt' | null = null;
+  sortDir: 'asc' | 'desc' = 'asc';
 
       // search + paging
   q = '';
@@ -68,8 +71,8 @@ export class Customers implements OnInit {
     this.page = 1;
     this.applyFilters();
   }
-    private applyFilters() {
-    const filtered = !this.q
+  private applyFilters() {
+    let filtered = !this.q
       ? this.all
       : this.all.filter(c =>
           (c.name + c.email + c.plan + c.status)
@@ -77,21 +80,60 @@ export class Customers implements OnInit {
             .includes(this.q)
         );
 
+    // 🔹 apply sorting
+    if (this.sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        const dir = this.sortDir === 'asc' ? 1 : -1;
+        const fa = this.getFieldValue(a, this.sortField!);
+        const fb = this.getFieldValue(b, this.sortField!);
+
+        if (fa < fb) { return -1 * dir; }
+        if (fa > fb) { return  1 * dir; }
+        return 0;
+      });
+    }
+
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
     const start = (this.page - 1) * this.pageSize;
     this.view = filtered.slice(start, start + this.pageSize);
   }
-    private slicePage() {
-    const filtered = !this.q
+
+    private getFieldValue(c: Customer, field: 'name' | 'email' | 'plan' | 'status' | 'mrr' | 'createdAt'): any {
+    switch (field) {
+      case 'name': return c.name.toLowerCase();
+      case 'email': return c.email.toLowerCase();
+      case 'plan': return c.plan;
+      case 'status': return c.status;
+      case 'mrr': return c.mrr;
+      case 'createdAt': return c.createdAt;
+    }
+  }
+
+
+  private slicePage() {
+    let filtered = !this.q
       ? this.all
       : this.all.filter(c =>
           (c.name + c.email + c.plan + c.status)
             .toLowerCase()
             .includes(this.q)
         );
+
+    if (this.sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        const dir = this.sortDir === 'asc' ? 1 : -1;
+        const fa = this.getFieldValue(a, this.sortField!);
+        const fb = this.getFieldValue(b, this.sortField!);
+        if (fa < fb) { return -1 * dir; }
+        if (fa > fb) { return  1 * dir; }
+        return 0;
+      });
+    }
+
     const start = (this.page - 1) * this.pageSize;
     this.view = filtered.slice(start, start + this.pageSize);
   }
+
 
   createNew() {
   this.form = {
@@ -106,6 +148,18 @@ export class Customers implements OnInit {
 
   this.showModal = true;
 }
+
+  sortBy(field: 'name' | 'email' | 'plan' | 'status' | 'mrr' | 'createdAt') {
+    if (this.sortField === field) {
+      // toggle asc/desc
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+    this.applyFilters();
+  }
+
 
 
 }

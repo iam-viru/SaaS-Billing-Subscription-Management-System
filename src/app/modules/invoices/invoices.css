@@ -210,3 +210,17 @@
   padding: .35rem .65rem !important;
   font-size: .8rem !important;
 }
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background: #eef2ff;
+}
+
+.sort-indicator {
+  font-size: .7rem;
+  margin-left: .25rem;
+}

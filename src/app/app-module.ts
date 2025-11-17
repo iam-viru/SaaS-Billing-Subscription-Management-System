@@ -1,12 +1,15 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { SharedModule } from './shared/shared-module';
 import { ModulesModule } from './modules/modules-module';
 import { TokenInterceptor } from './core/interceptors/token-interceptor';
 import { FormsModule } from '@angular/forms';
+
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+
 @NgModule({
   declarations: [
     App
@@ -17,7 +20,7 @@ import { FormsModule } from '@angular/forms';
     SharedModule,
     ModulesModule,
     HttpClientModule,
-     FormsModule
+    FormsModule
   ],
   providers: [
     {
@@ -25,7 +28,7 @@ import { FormsModule } from '@angular/forms';
       useClass: TokenInterceptor,
       multi: true
     },
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners() 
   ],
   bootstrap: [App]
 })

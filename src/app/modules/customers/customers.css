@@ -231,3 +231,18 @@
   }
 }
 
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background: #eef2ff;
+}
+
+.sort-indicator {
+  font-size: .7rem;
+  margin-left: .25rem;
+}
+
+

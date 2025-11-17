@@ -34,19 +34,34 @@
   <!-- Table -->
   <div class="table-card card">
     <table class="table">
-     <thead>
+<thead>
   <tr>
     <th>#</th>
-    <th>Invoice</th>
-    <th>Customer</th>
-    <th>Plan</th>
-    <th>Status</th>
-    <th>Amount</th>
-    <th>Issued</th>
-    <th>Due</th>
-    <th class="actions-col">Actions</th> <!-- NEW -->
+    <th (click)="sortBy('invoiceNumber')" class="sortable">
+      Invoice <span class="sort-indicator" *ngIf="sortField === 'invoiceNumber'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('customerName')" class="sortable">
+      Customer <span class="sort-indicator" *ngIf="sortField === 'customerName'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('plan')" class="sortable">
+      Plan <span class="sort-indicator" *ngIf="sortField === 'plan'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('status')" class="sortable">
+      Status <span class="sort-indicator" *ngIf="sortField === 'status'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('amount')" class="sortable">
+      Amount <span class="sort-indicator" *ngIf="sortField === 'amount'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('issueDate')" class="sortable">
+      Issued <span class="sort-indicator" *ngIf="sortField === 'issueDate'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('dueDate')" class="sortable">
+      Due <span class="sort-indicator" *ngIf="sortField === 'dueDate'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th class="actions-col">Actions</th>
   </tr>
 </thead>
+
 
        <tbody>
   <tr *ngFor="let inv of view">

@@ -28,18 +28,31 @@
   <!-- Table container -->
   <div class="table-card card">
     <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Customer</th>
-          <th>Email</th>
-          <th>Plan</th>
-          <th>Status</th>
-          <th>MRR</th>
-          <th>Joined</th>
-          <th class="actions-col">Actions</th>
-        </tr>
-      </thead>
+    <thead>
+  <tr>
+    <th>ID</th>
+    <th (click)="sortBy('name')"      class="sortable">
+      Customer <span class="sort-indicator" *ngIf="sortField === 'name'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('email')"     class="sortable">
+      Email <span class="sort-indicator" *ngIf="sortField === 'email'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('plan')"      class="sortable">
+      Plan <span class="sort-indicator" *ngIf="sortField === 'plan'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('status')"    class="sortable">
+      Status <span class="sort-indicator" *ngIf="sortField === 'status'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('mrr')"       class="sortable">
+      MRR <span class="sort-indicator" *ngIf="sortField === 'mrr'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th (click)="sortBy('createdAt')" class="sortable">
+      Joined <span class="sort-indicator" *ngIf="sortField === 'createdAt'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+    </th>
+    <th class="actions-col">Actions</th>
+  </tr>
+</thead>
+
 
       <tbody>
         <tr *ngFor="let c of view">

@@ -9,6 +9,10 @@ import { Invoice, InvoiceStatus } from '../../core/models/invoice.model';
   styleUrl: './invoices.css',
 })
 export class Invoices implements OnInit {
+
+    sortField: 'invoiceNumber' | 'customerName' | 'plan' | 'status' | 'amount' | 'issueDate' | 'dueDate' | null = null;
+  sortDir: 'asc' | 'desc' = 'asc';
+
    all: Invoice[] = [];
   view: Invoice[] = [];
   // modal state
@@ -51,7 +55,7 @@ export class Invoices implements OnInit {
     this.slicePage();
   }
 
-  private applyFilters() {
+   private applyFilters() {
     let filtered = this.all;
 
     if (this.q) {
@@ -66,10 +70,23 @@ export class Invoices implements OnInit {
       filtered = filtered.filter(i => i.status === this.statusFilter);
     }
 
+    // 🔹 sorting
+    if (this.sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        const dir = this.sortDir === 'asc' ? 1 : -1;
+        const fa = this.getFieldValue(a, this.sortField!);
+        const fb = this.getFieldValue(b, this.sortField!);
+        if (fa < fb) { return -1 * dir; }
+        if (fa > fb) { return  1 * dir; }
+        return 0;
+      });
+    }
+
     this.totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
     const start = (this.page - 1) * this.pageSize;
     this.view = filtered.slice(start, start + this.pageSize);
   }
+
 
   private slicePage() {
     let filtered = this.all;
@@ -86,9 +103,21 @@ export class Invoices implements OnInit {
       filtered = filtered.filter(i => i.status === this.statusFilter);
     }
 
+    if (this.sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        const dir = this.sortDir === 'asc' ? 1 : -1;
+        const fa = this.getFieldValue(a, this.sortField!);
+        const fb = this.getFieldValue(b, this.sortField!);
+        if (fa < fb) { return -1 * dir; }
+        if (fa > fb) { return  1 * dir; }
+        return 0;
+      });
+    }
+
     const start = (this.page - 1) * this.pageSize;
     this.view = filtered.slice(start, start + this.pageSize);
   }
+
 
     open(inv: Invoice) {
     // create a copy so editing doesn’t mutably change the table until Save
@@ -142,6 +171,28 @@ export class Invoices implements OnInit {
   this.showModal = true;
 }
 
+
+  sortBy(field: 'invoiceNumber' | 'customerName' | 'plan' | 'status' | 'amount' | 'issueDate' | 'dueDate') {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+    this.applyFilters();
+  }
+
+    private getFieldValue(inv: Invoice, field: 'invoiceNumber' | 'customerName' | 'plan' | 'status' | 'amount' | 'issueDate' | 'dueDate'): any {
+    switch (field) {
+      case 'invoiceNumber': return inv.invoiceNumber;
+      case 'customerName':  return inv.customerName.toLowerCase();
+      case 'plan':          return inv.plan;
+      case 'status':        return inv.status;
+      case 'amount':        return inv.amount;
+      case 'issueDate':     return inv.issueDate;
+      case 'dueDate':       return inv.dueDate;
+    }
+  }
 
 
 

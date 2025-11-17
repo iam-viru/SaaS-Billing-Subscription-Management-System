@@ -6,6 +6,8 @@ import { Invoices } from './invoices/invoices';
 import { Settings } from './settings/settings';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared-module';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 
 
 
@@ -19,7 +21,12 @@ import { SharedModule } from '../shared/shared-module';
   imports: [
     CommonModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    BaseChartDirective
+  ],
+    providers: [
+    // ⭐ VERY IMPORTANT ⭐
+    provideCharts(withDefaultRegisterables())
   ],
   exports: [
     Dashboard,

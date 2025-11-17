@@ -1,21 +1,121 @@
-<h1 class="page-title">Dashboard</h1>
+<div class="dashboard-container">
 
-<section class="grid grid-3">
-  <div class="card kpi">
-    <div class="title">Active Subscriptions</div>
-    <div class="value">1,248</div>
+  <div class="page-header">
+    <h1>Dashboard Overview</h1>
+    <p class="subtitle">Live metrics from customers and invoices</p>
   </div>
-  <div class="card kpi">
-    <div class="title">MRR</div>
-    <div class="value">$42,610</div>
-  </div>
-  <div class="card kpi">
-    <div class="title">Churn (30d)</div>
-    <div class="value">1.8%</div>
-  </div>
-</section>
 
-<section class="card" style="margin-top:1rem; padding:1rem;">
-  <h3 style="margin:0 0 .5rem 0;">Revenue Overview</h3>
-  <p>Chart placeholder — we’ll wire charts next.</p>
-</section>
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+
+    <div class="card kpi-card">
+      <div class="kpi-label">Total Customers</div>
+      <div class="kpi-value">{{ metrics.totalCustomers }}</div>
+      <div class="kpi-sub">Customers in the system</div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-label">Active Customers</div>
+      <div class="kpi-value">{{ metrics.activeCustomers }}</div>
+      <div class="kpi-sub">{{ metrics.activeCustomers }} active</div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-label">MRR</div>
+      <div class="kpi-value">${{ metrics.monthlyRecurringRevenue }}</div>
+      <div class="kpi-sub">Monthly recurring revenue</div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-label">Pending Invoices</div>
+      <div class="kpi-value">${{ metrics.pendingInvoicesAmount }}</div>
+    </div>
+
+    <div class="card kpi-card warning">
+      <div class="kpi-label">Overdue</div>
+      <div class="kpi-value">
+        {{ metrics.overdueInvoicesCount }} / ${{ metrics.overdueInvoicesAmount }}
+      </div>
+      <div class="kpi-sub">Count / Amount</div>
+    </div>
+
+    <div class="card kpi-card">
+      <div class="kpi-label">Paid (Total)</div>
+      <div class="kpi-value">${{ metrics.paidInvoicesAmount }}</div>
+    </div>
+  </div>
+
+  <!-- Charts + Recent Invoices -->
+  <div class="bottom-grid">
+
+    <!-- Recent Invoices -->
+    <div class="card recent-card">
+      <h2>Recent Invoices</h2>
+
+      <table class="table small-table">
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Amount</th>
+            <th>Issued</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of recentInvoices">
+            <td class="strong">{{ inv.invoiceNumber }}</td>
+            <td>
+              {{ inv.customerName }}
+              <div class="sub">{{ inv.customerEmail }}</div>
+            </td>
+            <td>
+              <span class="pill"
+                [class.pending]="inv.status === 'Pending'"
+                [class.overdue]="inv.status === 'Overdue'">
+                {{ inv.status }}
+              </span>
+            </td>
+            <td>{{ inv.currency }} {{ inv.amount }}</td>
+            <td>{{ inv.issueDate | date:'mediumDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="card chart-card">
+      <h2>Revenue & Customers</h2>
+
+      <div class="charts-grid">
+
+        <!-- Line Chart -->
+        <div class="chart-block">
+          <h3 class="chart-title">Revenue by Month</h3>
+
+ <canvas
+  baseChart
+  [data]="revenueChartData"
+  [options]="revenueChartOptions"
+  type="line">
+</canvas>
+
+
+        </div>
+
+        <!-- Doughnut Chart -->
+        <div class="chart-block">
+          <h3 class="chart-title">Active Customers by Plan</h3>
+
+          <canvas
+            baseChart
+            [data]="planChartData"
+            [options]="planChartOptions"
+            type="doughnut">
+          </canvas>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

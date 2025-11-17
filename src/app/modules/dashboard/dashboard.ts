@@ -1,4 +1,20 @@
-import { Component } from '@angular/core';
+ import { Component, OnInit } from '@angular/core';
+import {CustomerService  } from '../../core/services/customer';
+import { InvoiceService } from '../../core/services/invoice';
+import { Customer } from '../../core/models/customer.model';
+import { Invoice } from '../../core/models/invoice.model';
+import 'chart.js/auto';
+
+import { ChartConfiguration, ChartOptions } from 'chart.js';
+interface DashboardMetrics {
+  totalCustomers: number;
+  activeCustomers: number;
+  monthlyRecurringRevenue: number;
+  pendingInvoicesAmount: number;
+  overdueInvoicesAmount: number;
+  overdueInvoicesCount: number;
+  paidInvoicesAmount: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -6,6 +22,143 @@ import { Component } from '@angular/core';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit{
+ 
+  customers: Customer[] = [];
+  invoices: Invoice[] = [];
 
+  metrics = {
+    totalCustomers: 0,
+    activeCustomers: 0,
+    monthlyRecurringRevenue: 0,
+    pendingInvoicesAmount: 0,
+    overdueInvoicesAmount: 0,
+    overdueInvoicesCount: 0,
+    paidInvoicesAmount: 0
+  };
+
+  recentInvoices: Invoice[] = [];
+
+  // REVENUE CHART
+  revenueChartData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: 'Revenue',
+        fill: true,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        tension: 0.4,
+        pointRadius: 4
+      }
+    ]
+  };
+
+  revenueChartOptions: ChartOptions<'line'> = {
+    responsive: true,
+    scales: {
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      legend: { display: false }
+    }
+  };
+
+  // PLAN DISTRIBUTION CHART
+  planChartData: ChartConfiguration<'doughnut'>['data'] = {
+    labels: ['Basic', 'Pro', 'Enterprise'],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: ['#60a5fa', '#34d399', '#fbbf24']
+      }
+    ]
+  };
+
+  planChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    }
+  };
+
+  constructor(
+    private customerService: CustomerService,
+    private invoiceService: InvoiceService
+  ) {}
+
+  ngOnInit(): void {
+    this.customers = this.customerService.list();
+    this.invoices = this.invoiceService.list();
+
+    this.computeMetrics();
+    this.computeRecentInvoices();
+    this.computeCharts();
+  }
+
+  // -----------------------------------------
+  // KPIs
+  // -----------------------------------------
+
+  private computeMetrics() {
+    this.metrics.totalCustomers = this.customers.length;
+    this.metrics.activeCustomers = this.customers.filter(c => c.status === 'Active').length;
+
+    this.metrics.monthlyRecurringRevenue = this.customers
+      .filter(c => c.status === 'Active')
+      .reduce((sum, c) => sum + c.mrr, 0);
+
+    for (const inv of this.invoices) {
+      if (inv.status === 'Pending') this.metrics.pendingInvoicesAmount += inv.amount;
+      if (inv.status === 'Paid') this.metrics.paidInvoicesAmount += inv.amount;
+      if (inv.status === 'Overdue') {
+        this.metrics.overdueInvoicesAmount += inv.amount;
+        this.metrics.overdueInvoicesCount++;
+      }
+    }
+  }
+
+  private computeRecentInvoices() {
+    this.recentInvoices = [...this.invoices]
+      .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
+      .slice(0, 5);
+  }
+
+  // -----------------------------------------
+  // CHARTS
+  // -----------------------------------------
+
+  private computeCharts() {
+    this.buildRevenueByMonthChart();
+    this.buildPlanDistributionChart();
+  }
+
+  private buildRevenueByMonthChart() {
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const totals: any = {};
+
+    this.invoices.forEach(inv => {
+      const d = new Date(inv.issueDate);
+      const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      totals[key] = (totals[key] || 0) + inv.amount;
+    });
+
+    const labels = Object.keys(totals);
+    const data = labels.map(l => totals[l]);
+
+    this.revenueChartData.labels = labels;
+    this.revenueChartData.datasets[0].data = data;
+  }
+
+  private buildPlanDistributionChart() {
+    const plans = ['Basic','Pro','Enterprise'] as const;
+    const counts = { Basic: 0, Pro: 0, Enterprise: 0 };
+
+    this.customers.forEach(c => {
+      if (c.status === 'Active') counts[c.plan]++;
+    });
+
+    this.planChartData.datasets[0].data = plans.map(p => counts[p]);
+  }
 }
