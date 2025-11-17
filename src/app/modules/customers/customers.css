@@ -1,0 +1,233 @@
+/* -------- Page Wrapper -------- */
+.page-wrapper {
+  padding: 1.5rem;
+}
+
+/* -------- Header -------- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* -------- Card Style -------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+/* -------- Search Bar -------- */
+.search {
+  width: 350px;
+  padding: .65rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: .95rem;
+}
+
+/* -------- Toolbar -------- */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.label {
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+/* -------- Select Input -------- */
+.select {
+  padding: .55rem .75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: .9rem;
+}
+
+/* -------- Table Card -------- */
+.table-card {
+  padding: 0;
+}
+
+/* -------- Table -------- */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: .95rem;
+}
+
+.table thead {
+  background: #f9fafb;
+}
+
+.table th {
+  text-align: left;
+  padding: .75rem 1rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tbody tr {
+  background: white;
+  border-radius: 8px;
+  transition: all .2s ease;
+}
+
+.table tbody tr:hover {
+  background: #f3f6ff;
+  transform: translateY(-2px);
+}
+
+.table td {
+  padding: .75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.strong {
+  font-weight: 600;
+}
+
+/* -------- Badges -------- */
+.badge {
+  padding: .25rem .6rem;
+  border-radius: 12px;
+  background: #ede9fe;
+  color: #5b21b6;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* -------- Status Pills -------- */
+.pill {
+  padding: .25rem .65rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+.pill.pastdue {
+  background: #fef9c3;
+  color: #92400e;
+}
+
+.pill.canceled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* -------- Buttons -------- */
+.btn {
+  padding: .55rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: all .2s ease;
+}
+
+.btn:hover {
+  background: #f3f4f6;
+}
+
+.btn.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: white;
+}
+
+.btn.primary:hover {
+  background: var(--brand-600);
+}
+
+.btn.small {
+  padding: .35rem .6rem;
+  font-size: .8rem;
+}
+
+/* -------- Pager -------- */
+.pager {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  margin-top: .5rem;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 768px) {
+  .search { width: 100%; }
+  .toolbar { flex-direction: column; gap: .75rem; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .page-wrapper { padding: 1rem; }
+}
+
+
+/* -------- Modal Form Layout -------- */
+.modal-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+  padding: 1rem .5rem;
+}
+
+/* Form fields */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.form-field label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-field input,
+.form-field select {
+  padding: .65rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: .9rem;
+}
+
+/* -------- Modal Actions -------- */
+.modal-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  padding-top: .5rem;
+}
+
+/* -------- Responsive -------- */
+@media (max-width: 768px) {
+  .modal-form {
+    grid-template-columns: 1fr;
+  }
+}
+

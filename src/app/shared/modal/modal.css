@@ -1,0 +1,33 @@
+.modal-backdrop{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  display: grid; place-items: center;
+  padding: 1rem; z-index: 1000;
+}
+.modal-card{
+  width: 100%;
+  max-width: 640px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.modal-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.9rem 1rem; border-bottom:1px solid var(--border);
+}
+.modal-body{ padding: 1rem; }
+
+/* simple buttons */
+.btn{
+  border:1px solid var(--border);
+  background: var(--surface);
+  border-radius: 10px;
+  padding:.5rem .8rem;
+  cursor:pointer;
+}
+.btn.primary{ background: var(--brand); color: white; border-color: var(--brand); }
+.btn.ghost{ background: transparent; }
+.btn.icon{ padding:.35rem .55rem; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; }

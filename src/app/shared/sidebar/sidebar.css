@@ -1,0 +1,54 @@
+.sidebar {
+  width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.menu a {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  color: var(--text);
+}
+
+.menu a:hover {
+  background: #f2f4f8;
+  text-decoration: none;
+}
+
+.menu a.active {
+  background: #eaf2ff;
+  color: var(--brand-600);
+  font-weight: 600;
+}
+
+/* Mobile/IoT view */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .menu {
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .menu a {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}

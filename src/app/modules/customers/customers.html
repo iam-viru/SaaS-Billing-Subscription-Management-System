@@ -1,0 +1,137 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <h1>Customers</h1>
+    <button class="btn primary" (click)="createNew()">+ Add Customer</button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar card">
+    <input
+      type="search"
+      class="search"
+      placeholder="Search customers, email, plan, status..."
+      (input)="onSearch($any($event.target).value)"
+    />
+
+    <div class="toolbar-right">
+      <label class="label">Page size:</label>
+      <select class="select" [ngModel]="pageSize" (ngModelChange)="setPageSize(+($event))">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+        <option [value]="50">50</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table container -->
+  <div class="table-card card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Email</th>
+          <th>Plan</th>
+          <th>Status</th>
+          <th>MRR</th>
+          <th>Joined</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let c of view">
+          <td>{{ c.id }}</td>
+          <td class="strong">{{ c.name }}</td>
+          <td>{{ c.email }}</td>
+          <td><span class="badge">{{ c.plan }}</span></td>
+          <td>
+            <span class="pill" 
+                  [class.pastdue]="c.status==='Past Due'"
+                  [class.canceled]="c.status==='Canceled'">
+              {{ c.status }}
+            </span>
+          </td>
+          <td>${{ c.mrr }}</td>
+          <td>{{ c.createdAt | date:'mediumDate' }}</td>
+          <td>
+            <button class="btn small" (click)="open(c)">Edit</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="view.length === 0">
+          <td colspan="8" class="empty">No customers found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pager">
+    <button class="btn small" (click)="changePage(-1)" [disabled]="page===1">Prev</button>
+    <span>Page {{page}} / {{totalPages}}</span>
+    <button class="btn small" (click)="changePage(1)" [disabled]="page===totalPages">Next</button>
+  </div>
+
+</div>
+
+<app-modal [visible]="showModal" title="Customer Details" (close)="close()">
+
+  <ng-container *ngIf="form">
+
+    <form class="modal-form" (ngSubmit)="save()" #f="ngForm">
+
+      <!-- Name -->
+      <div class="form-field">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="form.name" name="name" required />
+      </div>
+
+      <!-- Email -->
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="form.email" name="email" required />
+      </div>
+
+      <!-- Plan -->
+      <div class="form-field">
+        <label>Plan</label>
+        <select [(ngModel)]="form.plan" name="plan">
+          <option *ngFor="let p of plans" [ngValue]="p">{{ p }}</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="form-field">
+        <label>Status</label>
+        <select [(ngModel)]="form.status" name="status">
+          <option *ngFor="let s of statuses" [ngValue]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <!-- MRR -->
+      <div class="form-field">
+        <label>MRR ($)</label>
+        <input type="number" [(ngModel)]="form.mrr" name="mrr" />
+      </div>
+
+      <!-- Created At -->
+      <div class="form-field">
+        <label>Created At</label>
+        <input type="date" [(ngModel)]="form.createdAt" name="createdAt" />
+      </div>
+
+      <!-- Buttons -->
+      <div class="modal-actions">
+        <button type="button" class="btn" (click)="close()">Cancel</button>
+        <button type="submit" class="btn primary" [disabled]="f.invalid">Save</button>
+      </div>
+
+    </form>
+
+  </ng-container>
+
+</app-modal>
+

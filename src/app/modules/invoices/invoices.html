@@ -1,0 +1,163 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <h1>Invoices</h1>
+     <button class="btn btn-primary" (click)="createNew()">+ Add Invoice</button>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar card">
+    <input
+      type="search"
+      class="search"
+      placeholder="Search invoice #, customer, email, plan..."
+      (input)="onSearch($any($event.target).value)"
+    />
+
+    <div class="toolbar-right">
+      <label class="label">Status:</label>
+      <select class="select" [ngModel]="statusFilter" (ngModelChange)="onStatusChange($event)">
+        <option *ngFor="let s of statuses" [ngValue]="s">{{ s }}</option>
+      </select>
+
+      <label class="label">Page size:</label>
+      <select class="select" [ngModel]="pageSize" (ngModelChange)="setPageSize(+($event))">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+      </select>
+    </div>
+   
+
+  </div>
+
+  <!-- Table -->
+  <div class="table-card card">
+    <table class="table">
+     <thead>
+  <tr>
+    <th>#</th>
+    <th>Invoice</th>
+    <th>Customer</th>
+    <th>Plan</th>
+    <th>Status</th>
+    <th>Amount</th>
+    <th>Issued</th>
+    <th>Due</th>
+    <th class="actions-col">Actions</th> <!-- NEW -->
+  </tr>
+</thead>
+
+       <tbody>
+  <tr *ngFor="let inv of view">
+    <td>{{ inv.id }}</td>
+    <td class="strong">{{ inv.invoiceNumber }}</td>
+    <td>
+      {{ inv.customerName }}
+      <div class="sub">{{ inv.customerEmail }}</div>
+    </td>
+    <td><span class="badge">{{ inv.plan }}</span></td>
+    <td>
+      <span class="pill"
+            [class.pending]="inv.status === 'Pending'"
+            [class.overdue]="inv.status === 'Overdue'">
+        {{ inv.status }}
+      </span>
+    </td>
+    <td>{{ inv.currency }} {{ inv.amount }}</td>
+    <td>{{ inv.issueDate | date:'mediumDate' }}</td>
+    <td>{{ inv.dueDate   | date:'mediumDate' }}</td>
+    <td> 
+      <button class="btn btn-soft small" (click)="open(inv)">Edit</button>
+    </td>
+  </tr>
+
+  <tr *ngIf="view.length === 0">
+    <td colspan="9" class="empty">No invoices found.</td>
+  </tr>
+</tbody>
+
+    </table>
+  </div>
+
+  <!-- Pager -->
+  <div class="pager">
+    <button class="btn small" (click)="changePage(-1)" [disabled]="page===1">Prev</button>
+    <span>Page {{page}} / {{totalPages}}</span>
+    <button class="btn small" (click)="changePage(1)" [disabled]="page===totalPages">Next</button>
+  </div>
+
+  <app-modal [visible]="showModal" title="Invoice Details" (close)="close()">
+  <ng-container *ngIf="selected">
+
+    <form class="modal-form" (ngSubmit)="save()" #f="ngForm">
+      <!-- Invoice Number (read-only) -->
+      <div class="form-field">
+        <label>Invoice #</label>
+        <input type="text" [ngModel]="selected.invoiceNumber" name="invoiceNumber" disabled>
+      </div>
+
+      <!-- Customer Name -->
+      <div class="form-field">
+        <label>Customer</label>
+        <input type="text" [(ngModel)]="selected.customerName" name="customerName">
+      </div>
+
+      <!-- Customer Email -->
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="selected.customerEmail" name="customerEmail">
+      </div>
+
+      <!-- Plan -->
+      <div class="form-field">
+        <label>Plan</label>
+        <select [(ngModel)]="selected.plan" name="plan">
+          <option value="Basic">Basic</option>
+          <option value="Pro">Pro</option>
+          <option value="Enterprise">Enterprise</option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="form-field">
+        <label>Status</label>
+        <select [(ngModel)]="selected.status" name="status">
+          <option value="Paid">Paid</option>
+          <option value="Pending">Pending</option>
+          <option value="Overdue">Overdue</option>
+        </select>
+      </div>
+
+      <!-- Amount -->
+      <div class="form-field">
+        <label>Amount</label>
+        <input type="number" [(ngModel)]="selected.amount" name="amount" min="0">
+      </div>
+
+      <!-- Issue Date -->
+      <div class="form-field">
+        <label>Issued</label>
+        <input type="date" [(ngModel)]="selected.issueDate" name="issueDate">
+      </div>
+
+      <!-- Due Date -->
+      <div class="form-field">
+        <label>Due</label>
+        <input type="date" [(ngModel)]="selected.dueDate" name="dueDate">
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+       <button type="button" class="btn btn-soft" (click)="close()">Cancel</button>
+<button type="submit" class="btn btn-primary">Save</button>
+
+        
+      </div>
+    </form>
+
+  </ng-container>
+</app-modal>
+
+
+</div>
