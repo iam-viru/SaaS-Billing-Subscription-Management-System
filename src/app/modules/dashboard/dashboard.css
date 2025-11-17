@@ -142,6 +142,10 @@
 
 /* HEADER */
 .page-header {
+ display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
@@ -239,8 +243,331 @@
   margin-bottom: .5rem;
 }
 
-@media (max-width: 1100px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
+.range-toggle {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid #e5e7eb;
+}
+/* RANGE SWITCHER */
+.page-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .35rem;
+}
+
+.range-label {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #9ca3af;
+}
+.page-header-left h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.03em;
+}
+.range-btn {
+  border: none;
+  background: transparent;
+  padding: .25rem .7rem;
+  font-size: .8rem;
+  font-weight: 500;
+  color: #4b5563;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.range-btn:hover {
+  background: rgba(255,255,255,.8);
+}
+
+.range-btn.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .page-header-right {
+    align-items: flex-start;
   }
 }
+
+/* KPI WITH ICONS */
+.kpi-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kpi-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* Icon color variants */
+.kpi-icon.blue { background: #3b82f6; }
+.kpi-icon.green { background: #10b981; }
+.kpi-icon.purple { background: #8b5cf6; }
+.kpi-icon.orange { background: #f59e0b; }
+.kpi-icon.red { background: #ef4444; }
+.kpi-icon.teal { background: #14b8a6; }
+
+/* TEMPORARY ICON STYLING (until we use SVG) */
+.icon {
+  font-style: normal;
+}
+
+/* Optional, but improves spacing */
+.kpi-text .kpi-value {
+  margin-top: .2rem;
+}
+.icon-users::before { content: "👥"; }
+.icon-check::before { content: "✔"; }
+.icon-cash::before { content: "💰"; }
+.icon-clock::before { content: "⏳"; }
+.icon-warning::before { content: "⚠️"; }
+.icon-check-circle::before { content: "🟢"; }
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply to KPI cards */
+.kpi-card {
+  animation: fadeInUp 0.45s ease forwards;
+  opacity: 0;
+}
+
+/* Staggered animation delays */
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.10s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.20s; }
+.kpi-card:nth-child(5) { animation-delay: 0.25s; }
+.kpi-card:nth-child(6) { animation-delay: 0.30s; }
+
+
+/* Recent invoices card entrance */
+.recent-card {
+  animation: fadeInUp 0.5s ease forwards;
+  opacity: 0;
+  animation-delay: 0.35s;
+}
+
+/* Table rows fade-in */
+.table.small-table tbody tr {
+  opacity: 0;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.table.small-table tbody tr:nth-child(1) { animation-delay: .45s; }
+.table.small-table tbody tr:nth-child(2) { animation-delay: .52s; }
+.table.small-table tbody tr:nth-child(3) { animation-delay: .59s; }
+.table.small-table tbody tr:nth-child(4) { animation-delay: .66s; }
+.table.small-table tbody tr:nth-child(5) { animation-delay: .73s; }
+
+.bottom-grid {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  animation-delay: 0.40s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+  transition: all .2s ease;
+}
+
+
+/* RECENT TABLE BASE */
+.recent-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: .9rem;
+}
+
+.recent-table thead th {
+  text-align: left;
+  padding: .75rem 1rem;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ROW STYLE */
+.recent-table tbody tr {
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all .15s ease;
+  cursor: pointer;
+}
+
+.recent-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+/* CELL SPACING */
+.recent-table tbody td {
+  padding: 1rem 1rem;
+  vertical-align: middle;
+  border-top: 1px solid #f3f4f6;
+}
+
+.recent-table tbody tr td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.recent-table tbody tr td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* TEXT FORMATTING */
+.cust-name {
+  font-weight: 600;
+  color: #111827;
+}
+.cust-email {
+  font-size: .78rem;
+  color: #6b7280;
+}
+
+.inv-num .strong {
+  font-weight: 600;
+  color: #374151;
+}
+
+.amount {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* STATUS PILLS */
+.status-pill {
+  padding: .35rem .65rem;
+  border-radius: 40px;
+  font-size: .75rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+
+.status-pill.paid {
+  background: #10b981;
+}
+
+.status-pill.pending {
+  background: #fbbf24;
+  color: #1f2937;
+}
+
+.status-pill.overdue {
+  background: #ef4444;
+}
+.status-pill::before {
+  margin-right: .35rem;
+}
+
+.status-pill.paid::before {
+  content: "✔";
+}
+
+.status-pill.pending::before {
+  content: "⏳";
+}
+
+.status-pill.overdue::before {
+  content: "⚠️";
+}
+
+.invoice-details {
+  padding: .5rem .25rem;
+}
+
+.inv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.inv-label {
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #9ca3af;
+  margin-bottom: .2rem;
+}
+
+.inv-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.inv-block {
+  padding: .7rem .8rem;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.block-label {
+  font-size: .78rem;
+  color: #6b7280;
+  margin-bottom: .2rem;
+}
+
+.block-main {
+  font-size: .95rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.block-sub {
+  font-size: .8rem;
+  color: #6b7280;
+}
+
+.inv-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: .5rem;
+}
+

@@ -24,6 +24,26 @@ interface DashboardMetrics {
 })
 export class Dashboard implements OnInit{
  
+
+
+    // invoice detail modal
+  showInvoiceModal = false;
+  selectedInvoice: Invoice | null = null;
+
+    openInvoice(inv: Invoice) {
+    this.selectedInvoice = inv;
+    this.showInvoiceModal = true;
+  }
+
+  closeInvoiceModal() {
+    this.showInvoiceModal = false;
+    this.selectedInvoice = null;
+  }
+
+    // time range for charts + invoice-based metrics
+  range: '3m' | '6m' | '12m' | 'all' = '12m';
+  filteredInvoices: Invoice[] = [];
+
   customers: Customer[] = [];
   invoices: Invoice[] = [];
 
@@ -55,15 +75,20 @@ export class Dashboard implements OnInit{
     ]
   };
 
-  revenueChartOptions: ChartOptions<'line'> = {
-    responsive: true,
-    scales: {
-      y: { beginAtZero: true }
-    },
-    plugins: {
-      legend: { display: false }
-    }
-  };
+ revenueChartOptions: ChartOptions<'line'> = {
+  responsive: true,
+  animation: {
+    duration: 800,
+    easing: 'easeOutQuart',
+  },
+  scales: {
+    y: { beginAtZero: true }
+  },
+  plugins: {
+    legend: { display: false }
+  }
+};
+
 
   // PLAN DISTRIBUTION CHART
   planChartData: ChartConfiguration<'doughnut'>['data'] = {
@@ -76,12 +101,20 @@ export class Dashboard implements OnInit{
     ]
   };
 
-  planChartOptions: ChartOptions<'doughnut'> = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'bottom' }
-    }
-  };
+ planChartOptions: ChartOptions<'doughnut'> = {
+  responsive: true,
+  animation: {
+    duration: 900,
+    easing: 'easeOutBack'
+  },
+  plugins: {
+    legend: { position: 'bottom' }
+  }
+};
+
+viewInvoice(inv: Invoice) {
+  alert('Invoice details coming soon: ' + inv.invoiceNumber);
+}
 
   constructor(
     private customerService: CustomerService,
@@ -95,13 +128,15 @@ export class Dashboard implements OnInit{
     this.computeMetrics();
     this.computeRecentInvoices();
     this.computeCharts();
+      this.applyRange();
   }
 
   // -----------------------------------------
   // KPIs
   // -----------------------------------------
 
-  private computeMetrics() {
+   private computeMetrics() {
+    // customers are always global (not filtered by date)
     this.metrics.totalCustomers = this.customers.length;
     this.metrics.activeCustomers = this.customers.filter(c => c.status === 'Active').length;
 
@@ -109,7 +144,9 @@ export class Dashboard implements OnInit{
       .filter(c => c.status === 'Active')
       .reduce((sum, c) => sum + c.mrr, 0);
 
-    for (const inv of this.invoices) {
+    const source = this.filteredInvoices;
+
+    for (const inv of source) {
       if (inv.status === 'Pending') this.metrics.pendingInvoicesAmount += inv.amount;
       if (inv.status === 'Paid') this.metrics.paidInvoicesAmount += inv.amount;
       if (inv.status === 'Overdue') {
@@ -119,11 +156,15 @@ export class Dashboard implements OnInit{
     }
   }
 
-  private computeRecentInvoices() {
-    this.recentInvoices = [...this.invoices]
+
+    private computeRecentInvoices() {
+    const src = this.filteredInvoices.length ? this.filteredInvoices : this.invoices;
+
+    this.recentInvoices = [...src]
       .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
       .slice(0, 5);
   }
+
 
   // -----------------------------------------
   // CHARTS
@@ -134,11 +175,12 @@ export class Dashboard implements OnInit{
     this.buildPlanDistributionChart();
   }
 
-  private buildRevenueByMonthChart() {
+    private buildRevenueByMonthChart() {
     const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const totals: any = {};
+    const src = this.filteredInvoices.length ? this.filteredInvoices : this.invoices;
 
-    this.invoices.forEach(inv => {
+    src.forEach(inv => {
       const d = new Date(inv.issueDate);
       const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
       totals[key] = (totals[key] || 0) + inv.amount;
@@ -151,6 +193,7 @@ export class Dashboard implements OnInit{
     this.revenueChartData.datasets[0].data = data;
   }
 
+
   private buildPlanDistributionChart() {
     const plans = ['Basic','Pro','Enterprise'] as const;
     const counts = { Basic: 0, Pro: 0, Enterprise: 0 };
@@ -161,4 +204,50 @@ export class Dashboard implements OnInit{
 
     this.planChartData.datasets[0].data = plans.map(p => counts[p]);
   }
+
+    setRange(range: '3m' | '6m' | '12m' | 'all') {
+    if (this.range === range) return;
+    this.range = range;
+    this.applyRange();
+  }
+
+  private applyRange() {
+    const now = new Date();
+    let cutoff: Date | null = null;
+
+    if (this.range === '3m') {
+      cutoff = new Date(now);
+      cutoff.setMonth(now.getMonth() - 3);
+    } else if (this.range === '6m') {
+      cutoff = new Date(now);
+      cutoff.setMonth(now.getMonth() - 6);
+    } else if (this.range === '12m') {
+      cutoff = new Date(now);
+      cutoff.setMonth(now.getMonth() - 12);
+    } else {
+      cutoff = null; // 'all'
+    }
+
+    this.filteredInvoices = cutoff
+      ? this.invoices.filter(inv => new Date(inv.issueDate) >= cutoff!)
+      : [...this.invoices];
+
+    this.resetMetrics();
+    this.computeMetrics();
+    this.computeRecentInvoices();
+    this.computeCharts();
+  }
+
+  private resetMetrics() {
+    this.metrics = {
+      totalCustomers: 0,
+      activeCustomers: 0,
+      monthlyRecurringRevenue: 0,
+      pendingInvoicesAmount: 0,
+      overdueInvoicesAmount: 0,
+      overdueInvoicesCount: 0,
+      paidInvoicesAmount: 0
+    };
+  }
+
 }
